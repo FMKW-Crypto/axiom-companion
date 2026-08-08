@@ -11,12 +11,23 @@ A browser extension that integrates directly into **axiom.trade**, enriching the
 | Concern | Choice | Why |
 |---|---|---|
 | Extension framework | **WXT** (v0.20.x) | Actively maintained (weekly releases), Vite-based, cross-browser (Chrome/Firefox/Edge/Safari), MV3, file-based entrypoints, built-in `createShadowRootUi` for injecting styled UI into pages without CSS collisions, `storage` and messaging helpers. The 2026 consensus over Plasmo (stalled) and CRXJS (Chrome-only plugin). |
-| UI library | **Svelte 5** | Small bundles + fast injected UI; WXT has an official Svelte module (`wxt-svelte-module` template). |
+| UI library | **Svelte 5** + **Tailwind v4** + **shadcn-svelte** | Small bundles + fast injected UI; WXT has an official Svelte module. shadcn-svelte is Svelte 5 runes-native and Tailwind v4-native, and shares shadcn/ui's semantic token contract — so the FMKW design system drops in (see §1b). |
 | Language | TypeScript (strict) | Type-safe port of the Rust models. |
 | Data models/validation | **Zod** schemas mirroring `axiomtrade-rs/src/models/*` | API responses drift; runtime validation catches it instead of silent `undefined`s. |
 | State | Svelte runes + `wxt/storage` for persistence | No extra state lib needed. |
 | Package manager | pnpm | Fast, standard with WXT. |
 | Tests | Vitest (WXT has first-class Vitest integration) | Unit-test the API client + parsers against recorded fixtures. |
+
+### 1b. UI base: reuse the FMKW design system (decided 2026-08-08)
+
+The extension reuses the design system from `../FMKW/apps/web` (React 19 + Tailwind v4 + shadcn/ui), **vendored by copy** (standalone repo, free to diverge):
+
+- **Copy verbatim**: `src/styles/palette.css`, the semantic-token block from `src/styles.css` (oklch, dark-only, `--radius: 0`), self-hosted fonts (`@fontsource-variable/geist`, `geist-mono`, `oxanium`, `space-grotesk`).
+- **Regenerate, not copy**: the `components/ui/*` React files. shadcn-svelte's CLI generates the Svelte 5 equivalents (button, card, table, sheet, tooltip, skeleton, spinner, badge, …), which read the **same CSS variables** as shadcn/ui — FMKW's theme applies automatically.
+- **Rebuild in Svelte, reusing their Tailwind classes**: the small domain components we need — `stat-card`, `order-table`, `order-status`, `query-state`, `page-header`.
+- **Shadow-DOM adaptation**: in content-script UIs, define tokens on `:host` instead of `:root` and put the `dark` class on the shadow container (FMKW's `@custom-variant dark` pattern carries over).
+
+Result: the extension looks native to the FMKW product family with near-zero design work, while keeping Svelte-sized bundles.
 
 ### Why not WASM from the Rust crate?
 The valuable parts of `axiomtrade-rs` are **knowledge** (endpoints, auth flow, payload shapes, WS cluster map), not compute. Its runtime deps (tokio, reqwest, tungstenite, IMAP OTP fetching) don't compile to browser WASM meaningfully — the browser already provides fetch/WebSocket/cookies. A thin TS port is smaller, debuggable, and HMR-friendly.
@@ -112,7 +123,7 @@ Extension health (session detected? API reachable?), feature toggles, quick-trad
 
 | Phase | Deliverable | Verify by |
 |---|---|---|
-| **0. Scaffold** | WXT + Svelte + TS project, CI lint/test, loads in Chrome with hello-world content script on axiom.trade | `pnpm dev` opens Chrome, panel visible |
+| **0. Scaffold** | WXT + Svelte + TS project; Tailwind v4 + shadcn-svelte init; vendor FMKW tokens/fonts; loads in Chrome with a themed hello-world shadow-root panel on axiom.trade | `pnpm dev` opens Chrome, panel visible in FMKW dark theme |
 | **1. Auth & API core** | `ApiClient`: cookie session discovery, refresh flow, endpoint pool + retry/rate-limit; Zod models for portfolio/market | Vitest against recorded fixtures; manual: background fetches portfolio while logged in |
 | **2. Interceptor** | MAIN-world fetch/WS observer + typed message bridge; schema-drift logger | See live payloads in devtools; drift report empty or explained |
 | **3. F1 Portfolio overlay** | Shadow-root side panel with live data | Panel matches values shown by axiom.trade itself |
@@ -146,6 +157,9 @@ axiom-companion/
   entrypoints/           # see §3
   src/
     lib/
+      components/ui/     # shadcn-svelte generated components (FMKW-themed)
+      components/        # stat-card, order-table, query-state... (Svelte ports)
+      styles/            # palette.css + semantic tokens vendored from FMKW
       api/               # auth.ts, portfolio.ts, trading.ts, market.ts
       models/            # zod schemas ported from Rust models
       ws/                # (post-v1) cluster map + client
