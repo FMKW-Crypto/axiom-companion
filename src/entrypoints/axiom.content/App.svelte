@@ -38,7 +38,7 @@
           Axiom <span class="text-primary">Companion</span>
         </span>
         <button
-          class="rounded-none px-2 py-0.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+          class="flex h-6 w-6 items-center justify-center rounded-none text-muted-foreground hover:bg-muted hover:text-foreground"
           onclick={() => (open = !open)}
           aria-label={open ? "Collapse panel" : "Expand panel"}
         >
