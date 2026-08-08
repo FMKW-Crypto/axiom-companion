@@ -43,8 +43,10 @@
   );
 </script>
 
-<section class="rounded-md border border-border bg-background p-3">
-  <h2 class="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+<section class="rounded-none border border-border bg-card p-3">
+  <h2
+    class="font-heading mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+  >
     Portfolio
   </h2>
 
@@ -56,14 +58,14 @@
       appear here.
     </p>
   {:else if state.status === "error"}
-    <p class="text-sm text-[var(--brand-negative)]">{state.message}</p>
+    <p class="text-sm text-destructive">{state.message}</p>
   {:else}
     <div class="mb-3 grid grid-cols-2 gap-2">
-      <div class="rounded bg-card p-2">
+      <div class="rounded-none bg-muted p-2">
         <div class="text-[10px] uppercase text-muted-foreground">Value</div>
         <div class="font-mono text-sm">{sol(balanceStats?.totalValueSol)}</div>
       </div>
-      <div class="rounded bg-card p-2">
+      <div class="rounded-none bg-muted p-2">
         <div class="text-[10px] uppercase text-muted-foreground">Unrealized</div>
         <div class={`font-mono text-sm ${signClass(balanceStats?.unrealizedPnlSol)}`}>
           {sol(balanceStats?.unrealizedPnlSol)}
@@ -84,7 +86,9 @@
 </section>
 
 {#snippet positionRow(p: Position)}
-  <li class="flex items-center justify-between rounded px-1 py-1 text-sm hover:bg-muted">
+  <li
+    class="flex items-center justify-between rounded-none px-1 py-1 text-sm hover:bg-muted"
+  >
     <span class="truncate font-medium">{p.symbol ?? "?"}</span>
     <span class="flex items-center gap-2">
       <span class="font-mono text-xs text-muted-foreground">{usd(p.valueUsd)}</span>

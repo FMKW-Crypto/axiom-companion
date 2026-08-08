@@ -47,22 +47,24 @@
 
   const riskClass = $derived(
     analysis?.creatorRiskLevel?.toLowerCase() === "high"
-      ? "text-[var(--brand-negative)]"
+      ? "text-destructive"
       : analysis?.creatorRiskLevel?.toLowerCase() === "medium"
-        ? "text-[var(--brand-caution)]"
-        : "text-[var(--brand-positive)]",
+        ? "text-warning"
+        : "text-success",
   );
 </script>
 
-<section class="rounded-md border border-border bg-background p-3">
-  <h2 class="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+<section class="rounded-none border border-border bg-card p-3">
+  <h2
+    class="font-heading mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+  >
     Token
   </h2>
 
   {#if loading}
     <p class="text-sm text-muted-foreground">Loading…</p>
   {:else if error}
-    <p class="text-sm text-[var(--brand-negative)]">{error}</p>
+    <p class="text-sm text-destructive">{error}</p>
   {:else}
     <div class="space-y-1 text-sm">
       <div class="flex items-center justify-between">

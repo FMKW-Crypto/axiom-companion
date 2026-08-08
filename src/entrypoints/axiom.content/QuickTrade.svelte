@@ -82,8 +82,10 @@
   }
 </script>
 
-<section class="rounded-md border border-border bg-background p-3">
-  <h2 class="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+<section class="rounded-none border border-border bg-card p-3">
+  <h2
+    class="font-heading mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+  >
     Quick buy
   </h2>
 
@@ -106,16 +108,16 @@
       {/if}
       <div class="flex gap-2">
         <button
-          class="flex-1 rounded bg-primary px-2 py-1 text-xs font-semibold
-                 text-primary-foreground hover:opacity-90 disabled:opacity-50"
+          class="flex-1 rounded-none bg-primary px-2 py-1 text-xs font-medium
+                 text-primary-foreground hover:bg-primary/80 disabled:opacity-50"
           onclick={confirmBuy}
           disabled={busy}
         >
           Confirm
         </button>
         <button
-          class="flex-1 rounded border border-border px-2 py-1 text-xs
-                 hover:bg-muted disabled:opacity-50"
+          class="flex-1 rounded-none border border-border px-2 py-1 text-xs
+                 font-medium hover:bg-muted disabled:opacity-50"
           onclick={cancel}
           disabled={busy}
         >
@@ -127,7 +129,7 @@
     <div class="flex flex-wrap gap-2">
       {#each settings.buyPresetsSol as amount (amount)}
         <button
-          class="rounded border border-border bg-card px-3 py-1 text-xs font-medium
+          class="rounded-none border border-border bg-muted px-3 py-1 text-xs font-medium
                  hover:border-primary hover:text-primary disabled:opacity-50"
           onclick={() => startBuy(amount)}
           disabled={busy}

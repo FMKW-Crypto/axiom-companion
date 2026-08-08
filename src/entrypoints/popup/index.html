@@ -1,5 +1,10 @@
 <!doctype html>
-<html>
+<!--
+  The extension is dark-only. The class is static rather than toggled from
+  script so there is no flash of the wrong theme before first paint, and so any
+  `dark:` utility resolves. See the note in `lib/styles/theme.css`.
+-->
+<html class="dark">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />

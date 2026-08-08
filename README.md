@@ -22,8 +22,11 @@ API-reachability health check in the popup, and the live WebSocket feed.
 
 - **[WXT](https://wxt.dev)** — MV3 web-extension framework (Vite, cross-browser).
 - **Svelte 5** + **Tailwind v4** — injected UI, mounted in shadow roots.
-- **FMKW design system** — brand palette/tokens vendored from `../FMKW`, so the
-  extension looks native to the FMKW product family (`src/lib/styles`).
+- **FMKW design system** — the semantic tokens, square corners (`--radius: 0`)
+  and self-hosted Oxanium / Space Grotesk / Geist Mono of `../FMKW/apps/web` are
+  vendored into `src/lib/styles`, so the extension looks native to the FMKW
+  product family. `theme.css` is a mirror of the web app's `styles.css`; edit
+  `palette.css` to reskin.
 - **Zod** — runtime validation of Axiom API responses (they drift; the schemas
   are lenient and report drift rather than crashing).
 

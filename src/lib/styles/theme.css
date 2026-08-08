@@ -2,63 +2,106 @@
 @import "./palette.css";
 
 /*
- * Vendored from FMKW/apps/web/src/styles.css and adapted for a browser
- * extension. Two differences from the source:
+ * Vendored from FMKW/apps/web/src/styles.css. The values below are the FMKW
+ * theme as it actually paints: that stylesheet declares a light ramp on `:root`
+ * and overrides it in `.dark`, and the app pins `class="dark"` on <html>, so
+ * only the dark values are ever seen. They are inlined here as one block rather
+ * than kept as two because the extension has no light mode to switch to.
  *
- *  1. The app ships `class="dark"` on <html> and reads shadcn's zinc+green dark
- *     ramp. Here the tokens are wired to the FMKW *brand* palette (blue-violet,
- *     hue ~268) so the extension carries the brand identity rather than the
- *     stock shadcn dark theme.
- *  2. Tokens are declared on `:root, :host` — `:root` covers the popup document,
- *     `:host` covers every content-script shadow root WXT mounts on axiom.trade.
- *     A shadow root has no :root, so a `:root`-only definition would leave
- *     injected panels unstyled.
+ * Three deliberate differences from the source:
+ *
+ *  1. Tokens are declared on `:root, :host`. `:root` covers the popup document;
+ *     `:host` covers the content-script shadow root WXT mounts on axiom.trade.
+ *     A shadow root has no `:root`, so a `:root`-only definition would leave the
+ *     injected panel unstyled.
+ *  2. The `html`/`body` base rules have `:host` counterparts for the same
+ *     reason — minus the background fill, which stays off the shadow host so the
+ *     panel floats over axiom.trade rather than painting a page on top of it.
+ *  3. Web fonts are imported from `fonts.css` by the popup only. `@font-face`
+ *     inside a shadow root is ignored, so the content script registers the same
+ *     three families against the page document instead — see
+ *     `lib/styles/documentFonts.ts`.
+ *
+ * To reskin, edit `palette.css` — not this file.
  */
 
+/**
+ * Dark-only, but the variant still has to exist, exactly as in the source: a
+ * shadcn component pasted in here ships `dark:` utilities inline, and an
+ * undefined variant silently drops them. Both mount points carry the class —
+ * the popup on <html>, the content script on the shadow container — so those
+ * utilities and the tokens below resolve to one and the same theme.
+ */
+@custom-variant dark (&:is(.dark *));
+
+/**
+ * Semantic tokens. Components read these; only this block reads the brand
+ * palette.
+ */
 :root,
 :host {
   color-scheme: dark;
-  --radius: var(--brand-radius);
 
-  --background: var(--brand-base);
-  --foreground: var(--brand-ink);
+  /* Square corners. Zeroing the token neutralises any stray `rounded-*`. */
+  --radius: 0rem;
 
-  --card: var(--brand-raised);
-  --card-foreground: var(--brand-ink);
+  --background: oklch(0.141 0.005 285.823);
+  --foreground: oklch(0.985 0 0);
 
-  --popover: var(--brand-overlay);
-  --popover-foreground: var(--brand-ink);
+  --card: oklch(0.21 0.006 285.885);
+  --card-foreground: oklch(0.985 0 0);
 
-  --primary: var(--brand-accent);
-  --primary-foreground: var(--brand-base);
+  --popover: oklch(0.21 0.006 285.885);
+  --popover-foreground: oklch(0.985 0 0);
 
-  --secondary: var(--brand-overlay);
-  --secondary-foreground: var(--brand-ink);
+  /* The accent is light, so anything printed on it takes a dark foreground. */
+  --primary: oklch(0.768 0.233 130.85);
+  --primary-foreground: oklch(0.405 0.101 131.063);
 
-  --muted: var(--brand-overlay);
-  --muted-foreground: var(--brand-ink-dim);
+  --secondary: oklch(0.274 0.006 286.033);
+  --secondary-foreground: oklch(0.985 0 0);
 
-  --accent: var(--brand-accent);
-  --accent-foreground: var(--brand-base);
+  --muted: oklch(0.274 0.006 286.033);
+  --muted-foreground: oklch(0.705 0.015 286.067);
 
-  --destructive: var(--brand-negative);
+  /* shadcn's `accent` is the hover/active fill, not the brand accent. */
+  --accent: oklch(0.768 0.233 130.85);
+  --accent-foreground: oklch(0.405 0.101 131.063);
+
+  --destructive: oklch(0.704 0.191 22.216);
   --destructive-foreground: var(--brand-base);
 
+  /* Not shadcn defaults. FMKW needs a non-failure warning (dry run, spend
+   * caps, custody) and a success distinct from it (confirmed on chain). */
   --success: var(--brand-positive);
   --success-foreground: var(--brand-base);
-
   --warning: var(--brand-caution);
   --warning-foreground: var(--brand-base);
 
-  --border: var(--brand-line);
-  --input: var(--brand-line);
-  --ring: var(--brand-accent);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.552 0.016 285.938);
 
-  --chart-1: var(--brand-accent);
-  --chart-2: var(--brand-positive);
-  --chart-3: var(--brand-caution);
-  --chart-4: var(--brand-negative);
-  --chart-5: var(--brand-accent-hi);
+  /*
+   * The inset sidebar variant paints the page in `--sidebar` and floats the
+   * content panel on top in `--background`, so the sidebar is the *lighter* of
+   * the two. That inversion is deliberate and matches shadcn's own dark theme.
+   */
+  --sidebar: oklch(0.21 0.006 285.885);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.768 0.233 130.85);
+  --sidebar-primary-foreground: oklch(0.274 0.072 132.109);
+  --sidebar-accent: oklch(0.274 0.006 286.033);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.552 0.016 285.938);
+
+  /* Chart series. */
+  --chart-1: oklch(0.809 0.105 251.813);
+  --chart-2: oklch(0.623 0.214 259.815);
+  --chart-3: oklch(0.546 0.245 262.881);
+  --chart-4: oklch(0.488 0.243 264.376);
+  --chart-5: oklch(0.424 0.199 265.638);
 }
 
 @theme inline {
@@ -90,29 +133,79 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 
-  --font-sans: var(--brand-font-sans);
+  --font-sans: 'Oxanium Variable', sans-serif;
   --font-mono: var(--brand-font-mono);
+  --font-heading: 'Space Grotesk Variable', sans-serif;
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-xs: calc(var(--radius) * 0.5);
+  --radius-sm: calc(var(--radius) * 0.75);
+  --radius-md: calc(var(--radius) * 0.875);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) * 1.5);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
 @layer base {
-  *,
-  ::before,
-  ::after {
-    border-color: var(--color-border);
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html,
+  :host {
+    @apply font-sans;
+  }
+
+  body {
+    @apply antialiased bg-background text-foreground;
+  }
+
+  /* The shadow host takes the text treatment but not the fill: the panel is an
+   * overlay on somebody else's page, so a background here would cover it. */
+  :host {
+    @apply antialiased text-foreground;
+  }
+
+  /*
+   * Every interactive element gets a visible ring on keyboard focus, including
+   * ones that never pass through a shared component. Components that style
+   * their own ring override this; the point is that nothing can end up with no
+   * indicator at all.
+   */
+  :focus-visible {
+    @apply outline-ring outline-2 outline-offset-2;
+  }
+
+  /*
+   * Long base58 strings have no spaces, so they will not wrap on their own and
+   * will push a table or a flex row wider than the panel.
+   */
+  .font-mono {
+    overflow-wrap: anywhere;
   }
 }
 
+/**
+ * Honour the OS motion preference. Decorative transitions are disabled here
+ * rather than per-component so a new component cannot forget.
+ */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

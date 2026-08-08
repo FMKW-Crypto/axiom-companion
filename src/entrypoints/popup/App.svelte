@@ -39,11 +39,11 @@
 </script>
 
 <main class="w-72 space-y-3 p-4 text-sm">
-  <h1 class="text-base font-semibold">
+  <h1 class="font-heading text-base font-semibold tracking-tight">
     Axiom <span class="text-primary">Companion</span>
   </h1>
 
-  <section class="rounded-md border border-border bg-card p-3">
+  <section class="rounded-none border border-border bg-card p-3">
     <div class="text-[10px] uppercase text-muted-foreground">Detected wallets</div>
     {#if wallets.length}
       <ul class="mt-1 space-y-0.5 font-mono text-xs">
@@ -66,7 +66,7 @@
   <label class="block space-y-1">
     <span class="text-muted-foreground">Buy presets (SOL, comma-separated)</span>
     <input
-      class="w-full rounded border border-input bg-background px-2 py-1 font-mono text-xs"
+      class="w-full rounded-none border border-input bg-background px-2 py-1 font-mono text-xs"
       bind:value={presetsText}
     />
   </label>
@@ -78,7 +78,7 @@
       min="0"
       max="100"
       step="0.5"
-      class="w-full rounded border border-input bg-background px-2 py-1 font-mono text-xs"
+      class="w-full rounded-none border border-input bg-background px-2 py-1 font-mono text-xs"
       bind:value={settings.slippagePercent}
     />
   </label>
@@ -89,21 +89,21 @@
       type="number"
       min="0"
       step="0.1"
-      class="w-full rounded border border-input bg-background px-2 py-1 font-mono text-xs"
+      class="w-full rounded-none border border-input bg-background px-2 py-1 font-mono text-xs"
       bind:value={settings.sessionSpendCapSol}
     />
   </label>
 
   <button
-    class="w-full rounded bg-primary px-3 py-1.5 text-xs font-semibold
-           text-primary-foreground hover:opacity-90"
+    class="w-full rounded-none bg-primary px-3 py-1.5 text-xs font-medium
+           text-primary-foreground hover:bg-primary/80"
     onclick={save}
   >
     {saved ? "Saved ✓" : "Save"}
   </button>
 
   {#if settings.quickTradeEnabled}
-    <p class="text-[10px] text-[var(--brand-caution)]">
+    <p class="text-[10px] text-warning">
       Quick-trade armed. Every buy still requires an explicit in-page
       confirmation and is capped per session.
     </p>

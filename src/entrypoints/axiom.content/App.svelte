@@ -24,16 +24,16 @@
   {#if open}
     <aside
       class="fixed right-3 top-16 z-[2147483000] flex max-h-[85vh] w-80 flex-col
-             overflow-hidden rounded-lg border border-border bg-card shadow-2xl"
+             overflow-hidden rounded-none border border-border bg-background shadow-2xl"
     >
       <header
         class="flex items-center justify-between border-b border-border px-3 py-2"
       >
-        <span class="text-sm font-semibold tracking-tight">
+        <span class="font-heading text-sm font-semibold tracking-tight">
           Axiom <span class="text-primary">Companion</span>
         </span>
         <button
-          class="rounded px-2 py-0.5 text-xs text-muted-foreground hover:bg-muted"
+          class="rounded-none px-2 py-0.5 text-xs text-muted-foreground hover:bg-muted"
           onclick={() => (open = false)}
           aria-label="Collapse panel"
         >
@@ -51,9 +51,9 @@
     </aside>
   {:else}
     <button
-      class="fixed right-3 top-16 z-[2147483000] rounded-full border border-border
-             bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground
-             shadow-lg hover:opacity-90"
+      class="fixed right-3 top-16 z-[2147483000] rounded-none border border-transparent
+             bg-primary px-3 py-2 text-xs font-medium text-primary-foreground
+             shadow-lg hover:bg-primary/80"
       onclick={() => (open = true)}
     >
       Axiom Companion

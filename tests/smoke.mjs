@@ -60,9 +60,9 @@ try {
   );
   hasToggle ? ok("popup shows quick-trade toggle") : fail("popup missing toggle");
   hasSave ? ok("popup shows save button") : fail("popup missing save button");
-  // The theme must actually paint — not the transparent/white default. The
-  // token resolves to FMKW's brand-base, which Chromium reports as an oklch()
-  // value with a low lightness (first component ~0.16).
+  // The theme must actually paint — not the transparent/white default.
+  // `--background` is FMKW's dark neutral, which Chromium reports as an oklch()
+  // value with a low lightness (first component ~0.14).
   const isDefault = bg === "rgba(0, 0, 0, 0)" || bg === "rgb(255, 255, 255)";
   const oklchL = Number(bg.match(/oklch\(\s*([\d.]+)/)?.[1] ?? "1");
   !isDefault && oklchL < 0.3
@@ -95,6 +95,37 @@ try {
   panelText.includes("Portfolio")
     ? ok("portfolio section rendered")
     : fail("portfolio section missing");
+
+  // 4. The panel's web fonts. A shadow root cannot register `@font-face`, so
+  // these have to reach the *page* document via `documentFonts.ts` — the one
+  // part of the theme that is not just a stylesheet, and the part that fails
+  // silently (straight to the fallback stack) when it breaks.
+  try {
+    await page.waitForFunction(
+      () =>
+        ["Oxanium Variable", "Space Grotesk Variable", "Geist Mono Variable"]
+          .every((family) =>
+            [...document.fonts].some((face) => face.family === family),
+          ),
+      null,
+      { timeout: 10_000 },
+    );
+    ok("theme fonts registered on the page document");
+  } catch {
+    const families = await page.evaluate(() =>
+      [...document.fonts].map((f) => f.family),
+    );
+    fail(`theme fonts missing from page document: [${families.join(", ")}]`);
+  }
+  const panelFonts = await host.evaluate((el) => ({
+    body: getComputedStyle(el.shadowRoot.querySelector(".ac-root")).fontFamily,
+    heading: getComputedStyle(el.shadowRoot.querySelector(".font-heading"))
+      .fontFamily,
+  }));
+  panelFonts.body.includes("Oxanium Variable") &&
+  panelFonts.heading.includes("Space Grotesk Variable")
+    ? ok("panel resolves Oxanium body / Space Grotesk heading")
+    : fail(`panel font stack unexpected: ${JSON.stringify(panelFonts)}`);
 
   // Capture screenshots when a SHOT_DIR is provided (for visual review).
   const shotDir = process.env.SHOT_DIR;

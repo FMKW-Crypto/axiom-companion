@@ -19,9 +19,16 @@
  * the surfaces they sit on.
  *
  * This application is dark-only. There is no light ramp to keep in sync.
+ *
+ * The one edit against the web app's copy of this file is the selector: `:host`
+ * is there because the content script mounts into a shadow root, which has no
+ * `:root` to match. Without it the `var(--brand-*)` references in `theme.css`
+ * resolve to nothing inside the injected panel and the status colours and the
+ * mono stack silently disappear.
  */
 
-:root {
+:root,
+:host {
   /* ── Neutral ramp, darkest to lightest ────────────────────────────────── */
 
   /** Page background, and the foreground colour of anything on `--brand-accent`. */

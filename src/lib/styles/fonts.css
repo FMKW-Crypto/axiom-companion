@@ -1,0 +1,19 @@
+/**
+ * The three faces the FMKW theme actually paints with: Oxanium for body copy
+ * (`--font-sans`), Space Grotesk for headings (`--font-heading`), Geist Mono for
+ * addresses and amounts (`--font-mono`). All self-hosted through
+ * `@fontsource-variable`, so rendering never depends on a third-party CDN and no
+ * request leaks a user's IP.
+ *
+ * The web app also pulls in Geist sans; it is left out here because nothing maps
+ * a token to it — `--brand-font-sans` names it, but `--font-sans` is Oxanium — and
+ * an unused face is dead weight in an extension bundle.
+ *
+ * Imported by the popup only. A shadow root cannot register `@font-face`, so the
+ * content script loads the same three files through `documentFonts.ts` instead.
+ * Keep the two lists in step.
+ */
+
+@import "@fontsource-variable/oxanium";
+@import "@fontsource-variable/space-grotesk";
+@import "@fontsource-variable/geist-mono";

@@ -29,5 +29,5 @@ export function shortAddr(a: string | null | undefined): string {
 /** Positive → success token, negative → destructive token, else muted. */
 export function signClass(n: number | null | undefined): string {
   if (n == null || !Number.isFinite(n) || n === 0) return "text-muted-foreground";
-  return n > 0 ? "text-[var(--brand-positive)]" : "text-[var(--brand-negative)]";
+  return n > 0 ? "text-success" : "text-destructive";
 }
