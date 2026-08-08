@@ -71,11 +71,18 @@ try {
 
   // 3. Content script injects on an axiom.trade page.
   const page = await ctx.newPage();
+  // The stub page carries a sidebar-shaped right column (tall, 320px, right
+  // edge) so the geometric anchor detection has something to find — this
+  // exercises the real inline-mount path, not just the overlay fallback.
   await page.route("https://axiom.trade/**", (route) =>
     route.fulfill({
       status: 200,
       contentType: "text/html",
-      body: "<!doctype html><html><head><title>Axiom</title></head><body><main>token</main></body></html>",
+      body:
+        "<!doctype html><html><head><title>Axiom</title></head><body>" +
+        '<main>token</main>' +
+        '<div id="sidebar" style="position:fixed;right:0;top:0;width:320px;height:100%">sidebar</div>' +
+        "</body></html>",
     }),
   );
   // The panel only renders on token pages, so navigate to a token URL (the
@@ -105,6 +112,12 @@ try {
   panelText.includes("Token")
     ? ok("token enrichment section rendered")
     : fail("token enrichment section missing");
+  const inSidebar = await host.evaluate(
+    (el) => el.parentElement?.id === "sidebar",
+  );
+  inSidebar
+    ? ok("panel anchored inline inside the sidebar column")
+    : fail("panel not anchored in the sidebar (fell back to overlay?)");
 
   // 4. The panel's web fonts. A shadow root cannot register `@font-face`, so
   // these have to reach the *page* document via `documentFonts.ts` — the one

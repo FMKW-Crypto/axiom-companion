@@ -42,7 +42,10 @@ never handles credentials. Two moving parts:
 - **Content-script UI** (`src/entrypoints/axiom.content/`) detects the token
   from the page URL and mounts the Svelte panel inside a shadow root so the
   FMKW theme never collides with axiom.trade's styles. The panel only appears
-  on token pages.
+  on token pages, anchored at the top of the site's own right sidebar — found
+  geometrically (`src/lib/sidebar.ts`), since axiom.trade has no stable
+  selectors — and falling back to a floating top-right overlay when no sidebar
+  exists (narrow windows, redesigns).
 
 ## What's ported from axiomtrade-rs
 

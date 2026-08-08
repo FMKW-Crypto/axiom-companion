@@ -94,7 +94,7 @@ entrypoints/
 ## 4. V1 features (decided)
 
 ### F1 — Token page enrichment
-Inject a stats strip on token pages: `token-analysis` (creator/dev info, related tokens), `clipboard-pair-info`, trending rank from `meme-trending`, price momentum from `price-feed`. Detect current token from the URL; the panel only exists on token pages.
+Inject a stats strip on token pages: `token-analysis` (creator/dev info, related tokens), `clipboard-pair-info`, trending rank from `meme-trending`, price momentum from `price-feed`. Detect current token from the URL; the panel only exists on token pages. Placement: inline at the top of the site's own right sidebar (found geometrically — the site has no stable selectors), floating overlay as fallback.
 
 ### Popup
 A short description of what the extension does; extension health (API reachable?) is post-v1.
@@ -120,7 +120,7 @@ The lenient schemas + drift logging exist because the SDK is from ~2025 and the 
 
 1. **API drift since the Rust SDK was written** — endpoints/payloads may have changed. Mitigation: lenient Zod schemas degrade per-field instead of crashing, and the drift logger reports exactly which fields disagree.
 2. **MV3 service worker lifetime** — background worker sleeps. Mitigation: the extension is stateless and request/response only; nothing depends on the worker staying alive.
-3. **Site DOM changes break injection points** — axiom.trade ships often. Mitigation: the panel anchors to `<body>` and detects tokens from the URL, not the DOM; it hides rather than crashes.
+3. **Site DOM changes break injection points** — axiom.trade ships often, with no stable selectors. Mitigation: the sidebar anchor is found geometrically (tall narrow right column) rather than by class name, tokens are detected from the URL, and the panel falls back to a floating overlay — it degrades rather than crashes.
 4. **Session security** — extension reads data from your logged-in session. Mitigation: strictly read-only (no code path places trades), no credential storage, no external servers, all data stays local. Personal-use tool; not for the Chrome Web Store initially (side-load via `wxt dev`/unpacked).
 5. **ToS** — automating requests against your own account may conflict with Axiom ToS; same exposure as running the Rust SDK's read APIs. Accepted by user; keep request volume low (rate limiter).
 
