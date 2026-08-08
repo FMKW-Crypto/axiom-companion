@@ -2,7 +2,6 @@
   import { onMount } from "svelte";
   import PortfolioPanel from "./PortfolioPanel.svelte";
   import TokenEnrichment from "./TokenEnrichment.svelte";
-  import QuickTrade from "./QuickTrade.svelte";
   import { currentTokenAddress } from "@/lib/tokenPage";
 
   let open = $state(true);
@@ -45,7 +44,6 @@
         <PortfolioPanel />
         {#if tokenAddress}
           <TokenEnrichment {tokenAddress} />
-          <QuickTrade {tokenAddress} />
         {/if}
       </div>
     </aside>

@@ -5,7 +5,6 @@ import {
   getTokenInfoByAddress,
   getTokenPrice,
 } from "@/lib/api/market";
-import { simulateBuy, executeBuy } from "@/lib/api/trading";
 import { addWallets, getWallets } from "@/lib/wallets";
 import type { Req, Envelope } from "@/lib/bridge/messages";
 
@@ -61,9 +60,5 @@ async function handle(api: ApiClient, req: Req): Promise<unknown> {
       return { ok: true };
     case "getKnownWallets":
       return getWallets();
-    case "simulateBuy":
-      return simulateBuy(api, req.mint, req.amountSol, req.slippage);
-    case "executeBuy":
-      return executeBuy(api, req.mint, req.amountSol, req.slippage);
   }
 }

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Browser extension that integrates into axiom.trade — portfolio overlay, quick-trade, token enrichment. Logic ported from axiomtrade-rs.",
+  "description": "Browser extension that integrates into axiom.trade — portfolio overlay and token enrichment. Logic ported from axiomtrade-rs.",
   "scripts": {
     "dev": "wxt",
     "dev:firefox": "wxt -b firefox",

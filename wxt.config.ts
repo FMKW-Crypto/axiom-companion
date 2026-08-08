@@ -11,7 +11,7 @@ export default defineConfig({
   manifest: {
     name: "Axiom Companion",
     description:
-      "Portfolio overlay, quick-trade and token enrichment for axiom.trade.",
+      "Portfolio overlay and token enrichment for axiom.trade.",
     permissions: ["storage", "cookies", "alarms"],
     host_permissions: ["https://axiom.trade/*", "https://*.axiom.trade/*"],
     // The content script fetches the theme's woff2 files to register them on the

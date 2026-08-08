@@ -53,13 +53,13 @@ try {
   const popup = await ctx.newPage();
   await popup.goto(`chrome-extension://${extId}/popup.html`);
   await popup.waitForSelector("text=Axiom", { timeout: 10_000 });
-  const hasToggle = await popup.getByText("Enable quick-trade").isVisible();
-  const hasSave = await popup.getByRole("button", { name: /save/i }).isVisible();
+  const hasWallets = await popup.getByText("Detected wallets").isVisible();
   const bg = await popup.evaluate(
     () => getComputedStyle(document.body).backgroundColor,
   );
-  hasToggle ? ok("popup shows quick-trade toggle") : fail("popup missing toggle");
-  hasSave ? ok("popup shows save button") : fail("popup missing save button");
+  hasWallets
+    ? ok("popup shows detected-wallets section")
+    : fail("popup missing detected-wallets section");
   // The theme must actually paint — not the transparent/white default.
   // `--background` is FMKW's dark neutral, which Chromium reports as an oklch()
   // value with a low lightness (first component ~0.14).

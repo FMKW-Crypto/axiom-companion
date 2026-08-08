@@ -1,22 +1,22 @@
 # Axiom Companion
 
 A browser extension that integrates directly into **axiom.trade** — a portfolio
-overlay, quick-trade actions, and token-page enrichment injected into the site
-itself. Trading and API logic is ported from the Rust SDK
-[`axiomtrade-rs`](../axiomtrade-rs) into TypeScript.
+overlay and token-page enrichment injected into the site itself. API logic is
+ported from the Rust SDK [`axiomtrade-rs`](../axiomtrade-rs) into TypeScript.
+The extension is strictly **read-only**: it never places trades.
 
 See [`PLAN.md`](PLAN.md) for the full design rationale and roadmap.
 
 ## Status
 
-V1 implements PLAN phases 0–5: scaffold, API core with auth refresh, MAIN-world
-interceptor, portfolio overlay (F1), token enrichment (F3), and quick-trade
-buys behind safety rails (F2). All checks pass: 18 unit tests, `svelte-check`
-with zero errors, production build, and the Chromium e2e smoke test.
+V1 implements the PLAN's read-only scope: scaffold, API core with auth refresh,
+MAIN-world interceptor, portfolio overlay (F1), and token enrichment (F2). All
+checks pass: unit tests, `svelte-check` with zero errors, production build, and
+the Chromium e2e smoke test.
 
-Deliberately deferred from the plan (post-v1): sell presets (buy-only for now),
-`meme-trending` rank and `price-feed` momentum in the enrichment strip,
-API-reachability health check in the popup, and the live WebSocket feed.
+Deliberately deferred from the plan (post-v1): `meme-trending` rank and
+`price-feed` momentum in the enrichment strip, API-reachability health check in
+the popup, and the live WebSocket feed.
 
 ## Stack
 
@@ -52,13 +52,13 @@ never handles credentials. Three moving parts:
 |---|---|
 | `auth/client.rs` (endpoint pool, refresh flow, headers) | `src/lib/api/client.ts` |
 | `api/portfolio.rs` (`portfolio-v5`, `batched-sol-balance`) | `src/lib/api/portfolio.ts` |
-| `api/trading.rs` (`quote`/`simulate`/`batched-send-tx-v2`, validation) | `src/lib/api/trading.ts` |
 | `api/market_data.rs` (`token-analysis`, `clipboard-pair-info`, `price`) | `src/lib/api/market.ts` |
 | `utils/{retry,rate_limiter}.rs` | `src/lib/utils/net.ts` |
-| `models/{trading,portfolio_v5,market}.rs` | `src/lib/models/*.ts` (zod) |
+| `models/{portfolio_v5,market}.rs` | `src/lib/models/*.ts` (zod) |
 
-Deliberately **not** ported: email/OTP/password login, Turnkey session creation,
-user-agent rotation — the browser session replaces all of it.
+Deliberately **not** ported: the trading endpoints, email/OTP/password login,
+Turnkey session creation, user-agent rotation — the extension only reads, and
+the browser session replaces the login machinery.
 
 ## Develop
 
@@ -87,9 +87,8 @@ page. Set `SHOT_DIR=/path` to also capture screenshots.
 
 ## Safety
 
-Quick-trade is **off by default** and, when enabled, every buy requires an
-explicit in-page confirmation shown after a `/simulate` dry-run, and is bounded
-by a per-session SOL spend cap. No credentials are stored, no data leaves the
-browser, and there are no external servers. This is a personal-use tool; running
-it against your own account carries the same ToS exposure as running the Rust
-SDK.
+The extension is **read-only**: it can display your portfolio and token data
+but has no code path that places, signs, or submits a trade. No credentials are
+stored, no data leaves the browser, and there are no external servers. This is
+a personal-use tool; running it against your own account carries the same ToS
+exposure as running the Rust SDK's read APIs.

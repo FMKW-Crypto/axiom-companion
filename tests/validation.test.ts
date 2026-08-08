@@ -1,9 +1,4 @@
 import { describe, it, expect } from "vitest";
-import {
-  validateTokenMint,
-  validateAmount,
-  validateSlippage,
-} from "@/lib/models/trading";
 import { currentTokenAddress } from "@/lib/tokenPage";
 import { usd, sol, pct, shortAddr } from "@/lib/format";
 import { PortfolioV5ResponseSchema } from "@/lib/models/portfolio";
@@ -11,28 +6,6 @@ import { TokenAnalysisSchema } from "@/lib/models/market";
 
 // A real Solana mint (USDC) — 44 base58 chars.
 const USDC = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
-
-describe("trade validation (ported from trading.rs)", () => {
-  it("accepts a valid mint", () => {
-    expect(validateTokenMint(USDC)).toBeNull();
-  });
-  it("rejects a too-short mint", () => {
-    expect(validateTokenMint("abc")).toMatch(/length/);
-  });
-  it("rejects non-base58 characters", () => {
-    expect(validateTokenMint("0".repeat(40))).toMatch(/base58/);
-  });
-  it("rejects non-positive amounts", () => {
-    expect(validateAmount(0, "SOL")).toMatch(/greater than zero/);
-    expect(validateAmount(-1, "SOL")).toMatch(/greater than zero/);
-    expect(validateAmount(0.1, "SOL")).toBeNull();
-  });
-  it("bounds slippage to 0..100", () => {
-    expect(validateSlippage(-1)).not.toBeNull();
-    expect(validateSlippage(101)).not.toBeNull();
-    expect(validateSlippage(5)).toBeNull();
-  });
-});
 
 describe("token page detection", () => {
   it("finds a base58 address in the path", () => {

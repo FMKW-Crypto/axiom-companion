@@ -1,6 +1,5 @@
 import type { PortfolioV5Response, BatchBalanceResponse } from "@/lib/models/portfolio";
 import type { TokenAnalysis, TokenInfo, PriceData } from "@/lib/models/market";
-import type { OrderResponse, Simulation } from "@/lib/models/trading";
 
 /**
  * Typed request/response contract between the content script and the background
@@ -15,9 +14,7 @@ export type Req =
   | { type: "getTokenInfo"; address: string }
   | { type: "getPrice"; mint: string }
   | { type: "reportWallets"; wallets: string[] }
-  | { type: "getKnownWallets" }
-  | { type: "simulateBuy"; mint: string; amountSol: number; slippage: number }
-  | { type: "executeBuy"; mint: string; amountSol: number; slippage: number };
+  | { type: "getKnownWallets" };
 
 export type Res = {
   getPortfolio: PortfolioV5Response;
@@ -27,8 +24,6 @@ export type Res = {
   getPrice: PriceData | null;
   reportWallets: { ok: true };
   getKnownWallets: string[];
-  simulateBuy: Simulation | null;
-  executeBuy: OrderResponse;
 };
 
 export type ResultOf<T extends Req["type"]> = Res[T];
