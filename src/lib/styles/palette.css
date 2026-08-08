@@ -1,0 +1,74 @@
+/**
+ * FMKW brand palette — the only file you edit to reskin the application.
+ *
+ * Nothing here is a shadcn token. These are raw brand values; `styles.css`
+ * maps them onto the semantic tokens (`--background`, `--primary`, …) that
+ * every component actually reads. Swapping a skin means replacing the values
+ * in this file and nothing else — no component, and no utility class in any
+ * route, names a colour directly.
+ *
+ * The values are the palette that shipped in the original hand-written
+ * stylesheet, converted from sRGB hex to OKLCH. The hex is kept in the comment
+ * so the conversion stays auditable. OKLCH because lightness is perceptually
+ * uniform, so `oklch(from … calc(l + .05) c h)` and opacity blends behave
+ * predictably — which the hover and focus states below rely on.
+ *
+ * The neutral ramp is deliberately not grey: every step carries a small amount
+ * of chroma at hue ~268, so surfaces read as blue-violet rather than muddy.
+ * Keep that shared hue when swapping, or the accents stop feeling related to
+ * the surfaces they sit on.
+ *
+ * This application is dark-only. There is no light ramp to keep in sync.
+ */
+
+:root {
+  /* ── Neutral ramp, darkest to lightest ────────────────────────────────── */
+
+  /** Page background, and the foreground colour of anything on `--brand-accent`. */
+  --brand-base: oklch(0.1593 0.0111 268); /* #0b0d12 */
+  /** Cards, the sidebar, and any panel lifted off the page. */
+  --brand-raised: oklch(0.1964 0.0168 269); /* #12151d */
+  /** Popovers, hover fills, and inputs — one step above a card. */
+  --brand-overlay: oklch(0.2271 0.0204 268); /* #181c26 */
+  /** Hairlines: borders, separators, table rules, input outlines. */
+  --brand-line: oklch(0.2794 0.0305 271); /* #232838 */
+  /** Body text and headings. */
+  --brand-ink: oklch(0.9338 0.01 267); /* #e6e9f0 */
+  /** Secondary text: hints, captions, column headers, timestamps. */
+  --brand-ink-dim: oklch(0.6635 0.0311 268); /* #8b93a7 */
+
+  /* ── Accents ──────────────────────────────────────────────────────────── */
+
+  /** Primary actions, links, focus rings. */
+  --brand-accent: oklch(0.6711 0.1733 270); /* #6c8cff */
+  /** Primary action, hovered. */
+  --brand-accent-hi: oklch(0.712 0.1495 270); /* #7f9bff */
+
+  /* ── Status ───────────────────────────────────────────────────────────── */
+
+  /** Confirmed orders, active configurations, success announcements. */
+  --brand-positive: oklch(0.7968 0.1636 160); /* #3ddc97 */
+  /** Dry run, spend caps, custody warnings — attention, not failure. */
+  --brand-caution: oklch(0.8615 0.1423 83); /* #ffc857 */
+  /** Failed orders, destructive actions, live-trading warnings. */
+  --brand-negative: oklch(0.7116 0.1812 23); /* #ff6b6b */
+
+  /* ── Typography ───────────────────────────────────────────────────────── */
+
+  /** Both faces are self-hosted through `@fontsource-variable`, so rendering
+   * never depends on a third-party CDN and no request leaks a visitor's IP. */
+  --brand-font-sans:
+    "Geist Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", Inter,
+    sans-serif;
+  /**
+   * Addresses, signatures, mints, and amounts. A Solana address is 32–44
+   * characters of mixed-case base58 where `l`/`I` and `0`/`O` are genuinely
+   * different keys, so proportional type is not merely uglier — it is wrong.
+   */
+  --brand-font-mono:
+    "Geist Mono Variable", ui-monospace, SFMono-Regular, "SF Mono", Menlo,
+    monospace;
+
+  /** Corner radius for cards, buttons, inputs. Everything else derives. */
+  --brand-radius: 0.625rem;
+}

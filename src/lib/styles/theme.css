@@ -1,0 +1,118 @@
+@import "tailwindcss";
+@import "./palette.css";
+
+/*
+ * Vendored from FMKW/apps/web/src/styles.css and adapted for a browser
+ * extension. Two differences from the source:
+ *
+ *  1. The app ships `class="dark"` on <html> and reads shadcn's zinc+green dark
+ *     ramp. Here the tokens are wired to the FMKW *brand* palette (blue-violet,
+ *     hue ~268) so the extension carries the brand identity rather than the
+ *     stock shadcn dark theme.
+ *  2. Tokens are declared on `:root, :host` — `:root` covers the popup document,
+ *     `:host` covers every content-script shadow root WXT mounts on axiom.trade.
+ *     A shadow root has no :root, so a `:root`-only definition would leave
+ *     injected panels unstyled.
+ */
+
+:root,
+:host {
+  color-scheme: dark;
+  --radius: var(--brand-radius);
+
+  --background: var(--brand-base);
+  --foreground: var(--brand-ink);
+
+  --card: var(--brand-raised);
+  --card-foreground: var(--brand-ink);
+
+  --popover: var(--brand-overlay);
+  --popover-foreground: var(--brand-ink);
+
+  --primary: var(--brand-accent);
+  --primary-foreground: var(--brand-base);
+
+  --secondary: var(--brand-overlay);
+  --secondary-foreground: var(--brand-ink);
+
+  --muted: var(--brand-overlay);
+  --muted-foreground: var(--brand-ink-dim);
+
+  --accent: var(--brand-accent);
+  --accent-foreground: var(--brand-base);
+
+  --destructive: var(--brand-negative);
+  --destructive-foreground: var(--brand-base);
+
+  --success: var(--brand-positive);
+  --success-foreground: var(--brand-base);
+
+  --warning: var(--brand-caution);
+  --warning-foreground: var(--brand-base);
+
+  --border: var(--brand-line);
+  --input: var(--brand-line);
+  --ring: var(--brand-accent);
+
+  --chart-1: var(--brand-accent);
+  --chart-2: var(--brand-positive);
+  --chart-3: var(--brand-caution);
+  --chart-4: var(--brand-negative);
+  --chart-5: var(--brand-accent-hi);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --font-sans: var(--brand-font-sans);
+  --font-mono: var(--brand-font-mono);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-border);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
