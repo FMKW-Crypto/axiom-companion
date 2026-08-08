@@ -1,17 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { sendMessage } from "@/lib/bridge/messages";
-  import { shortAddr } from "@/lib/format";
-
-  let wallets = $state<string[]>([]);
-
-  onMount(async () => {
-    try {
-      wallets = await sendMessage({ type: "getKnownWallets" });
-    } catch {
-      wallets = [];
-    }
-  });
+  // Static popup: the extension is read-only and has no settings.
 </script>
 
 <main class="w-72 space-y-3 p-4 text-sm">
@@ -20,22 +8,15 @@
   </h1>
 
   <section class="rounded-none border border-border bg-card p-3">
-    <div class="text-[10px] uppercase text-muted-foreground">Detected wallets</div>
-    {#if wallets.length}
-      <ul class="mt-1 space-y-0.5 font-mono text-xs">
-        {#each wallets.slice(0, 5) as w (w)}
-          <li class="truncate" title={w}>{shortAddr(w)}</li>
-        {/each}
-      </ul>
-    {:else}
-      <p class="mt-1 text-xs text-muted-foreground">
-        None yet — open your portfolio on axiom.trade.
-      </p>
-    {/if}
+    <p class="text-xs text-muted-foreground">
+      Read-only token enrichment for axiom.trade. Open any token page and the
+      Companion panel appears top-right with creator risk, rug count, and token
+      metadata.
+    </p>
   </section>
 
   <p class="text-[10px] text-muted-foreground">
-    Read-only companion: portfolio overlay and token enrichment injected into
-    axiom.trade. It never places trades.
+    No credentials, no trading, no external servers — data comes from the
+    session you're already logged into.
   </p>
 </main>

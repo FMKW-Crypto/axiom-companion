@@ -53,13 +53,13 @@ try {
   const popup = await ctx.newPage();
   await popup.goto(`chrome-extension://${extId}/popup.html`);
   await popup.waitForSelector("text=Axiom", { timeout: 10_000 });
-  const hasWallets = await popup.getByText("Detected wallets").isVisible();
+  const hasBlurb = await popup.getByText("token enrichment").first().isVisible();
   const bg = await popup.evaluate(
     () => getComputedStyle(document.body).backgroundColor,
   );
-  hasWallets
-    ? ok("popup shows detected-wallets section")
-    : fail("popup missing detected-wallets section");
+  hasBlurb
+    ? ok("popup describes the token-enrichment feature")
+    : fail("popup missing feature description");
   // The theme must actually paint — not the transparent/white default.
   // `--background` is FMKW's dark neutral, which Chromium reports as an oklch()
   // value with a low lightness (first component ~0.14).
@@ -78,7 +78,11 @@ try {
       body: "<!doctype html><html><head><title>Axiom</title></head><body><main>token</main></body></html>",
     }),
   );
-  await page.goto("https://axiom.trade/portfolio");
+  // The panel only renders on token pages, so navigate to a token URL (the
+  // route is fulfilled locally; the address just has to be base58-shaped).
+  await page.goto(
+    "https://axiom.trade/meme/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  );
   // The host element is present but zero-size (its panel is position:fixed), so
   // wait for it attached rather than visible.
   const host = await page.waitForSelector("axiom-companion-root", {
@@ -86,15 +90,21 @@ try {
     timeout: 10_000,
   });
   ok("content script mounted shadow-root host <axiom-companion-root>");
+  await page.waitForFunction(
+    () =>
+      document
+        .querySelector("axiom-companion-root")
+        ?.shadowRoot?.textContent?.includes("Companion") ?? false,
+    null,
+    { timeout: 10_000 },
+  );
   const panelText = await host.evaluate(
     (el) => el.shadowRoot?.textContent ?? "",
   );
-  panelText.includes("Companion")
-    ? ok("in-page panel rendered Companion header")
-    : fail(`panel content unexpected: ${panelText.slice(0, 80)}`);
-  panelText.includes("Portfolio")
-    ? ok("portfolio section rendered")
-    : fail("portfolio section missing");
+  ok("in-page panel rendered Companion header");
+  panelText.includes("Token")
+    ? ok("token enrichment section rendered")
+    : fail("token enrichment section missing");
 
   // 4. The panel's web fonts. A shadow root cannot register `@font-face`, so
   // these have to reach the *page* document via `documentFonts.ts` — the one

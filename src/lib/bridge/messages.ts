@@ -1,4 +1,3 @@
-import type { PortfolioV5Response, BatchBalanceResponse } from "@/lib/models/portfolio";
 import type { TokenAnalysis, TokenInfo, PriceData } from "@/lib/models/market";
 
 /**
@@ -8,22 +7,14 @@ import type { TokenAnalysis, TokenInfo, PriceData } from "@/lib/models/market";
  */
 
 export type Req =
-  | { type: "getPortfolio"; wallets: string[] }
-  | { type: "getBalances"; wallets: string[] }
   | { type: "getTokenAnalysis"; ticker: string }
   | { type: "getTokenInfo"; address: string }
-  | { type: "getPrice"; mint: string }
-  | { type: "reportWallets"; wallets: string[] }
-  | { type: "getKnownWallets" };
+  | { type: "getPrice"; mint: string };
 
 export type Res = {
-  getPortfolio: PortfolioV5Response;
-  getBalances: BatchBalanceResponse;
   getTokenAnalysis: TokenAnalysis | null;
   getTokenInfo: TokenInfo | null;
   getPrice: PriceData | null;
-  reportWallets: { ok: true };
-  getKnownWallets: string[];
 };
 
 export type ResultOf<T extends Req["type"]> = Res[T];

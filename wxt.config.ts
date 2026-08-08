@@ -10,9 +10,7 @@ export default defineConfig({
   }),
   manifest: {
     name: "Axiom Companion",
-    description:
-      "Portfolio overlay and token enrichment for axiom.trade.",
-    permissions: ["storage", "cookies", "alarms"],
+    description: "Read-only token enrichment for axiom.trade.",
     host_permissions: ["https://axiom.trade/*", "https://*.axiom.trade/*"],
     // The content script fetches the theme's woff2 files to register them on the
     // page document (see `lib/styles/documentFonts.ts`); an extension resource a

@@ -1,22 +1,22 @@
 # Axiom Companion
 
-A browser extension that integrates directly into **axiom.trade** — a portfolio
-overlay and token-page enrichment injected into the site itself. API logic is
-ported from the Rust SDK [`axiomtrade-rs`](../axiomtrade-rs) into TypeScript.
-The extension is strictly **read-only**: it never places trades.
+A browser extension that integrates directly into **axiom.trade** — a token-page
+enrichment panel injected into the site itself, showing creator risk, rug count,
+and token metadata next to the chart. API logic is ported from the Rust SDK
+[`axiomtrade-rs`](../axiomtrade-rs) into TypeScript. The extension is strictly
+**read-only**: it never places trades.
 
 See [`PLAN.md`](PLAN.md) for the full design rationale and roadmap.
 
 ## Status
 
-V1 implements the PLAN's read-only scope: scaffold, API core with auth refresh,
-MAIN-world interceptor, portfolio overlay (F1), and token enrichment (F2). All
-checks pass: unit tests, `svelte-check` with zero errors, production build, and
-the Chromium e2e smoke test.
+V1 implements the PLAN's scope: scaffold, API core with auth refresh, and the
+token-enrichment panel. All checks pass: unit tests, `svelte-check` with zero
+errors, production build, and the Chromium e2e smoke test.
 
 Deliberately deferred from the plan (post-v1): `meme-trending` rank and
-`price-feed` momentum in the enrichment strip, API-reachability health check in
-the popup, and the live WebSocket feed.
+`price-feed` momentum in the enrichment strip, and an API-reachability health
+check in the popup.
 
 ## Stack
 
@@ -33,32 +33,29 @@ the popup, and the live WebSocket feed.
 ## How it works
 
 The extension **rides the axiom.trade session you're already logged into** — it
-never handles credentials. Three moving parts:
+never handles credentials. Two moving parts:
 
 - **Background service worker** (`src/entrypoints/background.ts`) owns the single
   `ApiClient` and makes authenticated calls to `api*.axiom.trade`; cookies attach
   automatically via `host_permissions` + `credentials: "include"`, and it
   replays the SDK's refresh-token flow on a 401.
-- **MAIN-world interceptor** (`src/entrypoints/interceptor.content.ts`) passively
-  observes the page's own `fetch`/`WebSocket` traffic to auto-discover your
-  wallet addresses — no configuration — and to detect API schema drift.
-- **Content-script UI** (`src/entrypoints/axiom.content/`) mounts the Svelte
-  panels inside shadow roots so the FMKW theme never collides with axiom.trade's
-  styles.
+- **Content-script UI** (`src/entrypoints/axiom.content/`) detects the token
+  from the page URL and mounts the Svelte panel inside a shadow root so the
+  FMKW theme never collides with axiom.trade's styles. The panel only appears
+  on token pages.
 
 ## What's ported from axiomtrade-rs
 
 | Rust source | TypeScript target |
 |---|---|
 | `auth/client.rs` (endpoint pool, refresh flow, headers) | `src/lib/api/client.ts` |
-| `api/portfolio.rs` (`portfolio-v5`, `batched-sol-balance`) | `src/lib/api/portfolio.ts` |
 | `api/market_data.rs` (`token-analysis`, `clipboard-pair-info`, `price`) | `src/lib/api/market.ts` |
 | `utils/{retry,rate_limiter}.rs` | `src/lib/utils/net.ts` |
-| `models/{portfolio_v5,market}.rs` | `src/lib/models/*.ts` (zod) |
+| `models/market.rs` | `src/lib/models/market.ts` (zod) |
 
-Deliberately **not** ported: the trading endpoints, email/OTP/password login,
-Turnkey session creation, user-agent rotation — the extension only reads, and
-the browser session replaces the login machinery.
+Deliberately **not** ported: the trading and portfolio endpoints, email/OTP/
+password login, Turnkey session creation, user-agent rotation — the extension
+only reads token data, and the browser session replaces the login machinery.
 
 ## Develop
 
@@ -75,7 +72,7 @@ select `.output/chrome-mv3`.
 ## Test
 
 ```bash
-pnpm test         # vitest: validation, retry/rate-limit, lenient schemas
+pnpm test         # vitest: token detection, retry/rate-limit, lenient schemas
 pnpm compile      # svelte-check + tsc, zero errors
 pnpm test:e2e     # builds, loads the extension in Chromium, asserts it mounts
 ```
@@ -83,12 +80,12 @@ pnpm test:e2e     # builds, loads the extension in Chromium, asserts it mounts
 The e2e smoke test (`tests/smoke.mjs`) loads the built extension into a real
 Chromium, verifies the service worker registers, the popup renders in the FMKW
 theme, and the content script injects its shadow-root panel on an axiom.trade
-page. Set `SHOT_DIR=/path` to also capture screenshots.
+token page. Set `SHOT_DIR=/path` to also capture screenshots.
 
 ## Safety
 
-The extension is **read-only**: it can display your portfolio and token data
-but has no code path that places, signs, or submits a trade. No credentials are
-stored, no data leaves the browser, and there are no external servers. This is
-a personal-use tool; running it against your own account carries the same ToS
-exposure as running the Rust SDK's read APIs.
+The extension is **read-only**: it displays token data and has no code path
+that places, signs, or submits a trade. No credentials are stored, no data
+leaves the browser, and there are no external servers. This is a personal-use
+tool; running it against your own account carries the same ToS exposure as
+running the Rust SDK's read APIs.
