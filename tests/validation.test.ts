@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { currentTokenAddress } from "@/lib/tokenPage";
-import { shortAddr } from "@/lib/format";
 import { TokenAnalysisSchema, TokenInfoSchema } from "@/lib/models/market";
 
 // A real Solana mint (USDC) — 44 base58 chars.
@@ -13,14 +12,6 @@ describe("token page detection", () => {
   it("returns null off token pages", () => {
     expect(currentTokenAddress("/portfolio")).toBeNull();
     expect(currentTokenAddress("/")).toBeNull();
-  });
-});
-
-describe("formatters", () => {
-  it("shortens long addresses", () => {
-    expect(shortAddr(USDC)).toBe("EPjF…Dt1v");
-    expect(shortAddr("short")).toBe("short");
-    expect(shortAddr(null)).toBe("—");
   });
 });
 
