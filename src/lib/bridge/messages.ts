@@ -1,5 +1,5 @@
-import type { PortfolioV5Response } from "@/lib/models/portfolio";
-import type { TokenAnalysis } from "@/lib/models/market";
+import type { PortfolioV5Response, BatchBalanceResponse } from "@/lib/models/portfolio";
+import type { TokenAnalysis, TokenInfo, PriceData } from "@/lib/models/market";
 import type { OrderResponse, Simulation } from "@/lib/models/trading";
 
 /**
@@ -21,10 +21,10 @@ export type Req =
 
 export type Res = {
   getPortfolio: PortfolioV5Response;
-  getBalances: Record<string, unknown>;
+  getBalances: BatchBalanceResponse;
   getTokenAnalysis: TokenAnalysis | null;
-  getTokenInfo: unknown;
-  getPrice: unknown;
+  getTokenInfo: TokenInfo | null;
+  getPrice: PriceData | null;
   reportWallets: { ok: true };
   getKnownWallets: string[];
   simulateBuy: Simulation | null;

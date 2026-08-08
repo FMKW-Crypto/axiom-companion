@@ -42,7 +42,26 @@ export default defineContentScript({
       if (m) emitWallets(m);
     };
 
-    // Patch fetch: scan request URL + body for wallet-shaped strings.
+    // Only the fields that actually carry wallet addresses. A blanket base58
+    // scan over the body would also match every token mint in
+    // `tokenAddressToAmountMap` and store those as "wallets".
+    const scanBody = (body: string) => {
+      try {
+        const parsed = JSON.parse(body) as Record<string, unknown>;
+        const found: string[] = [];
+        if (typeof parsed.walletAddressRaw === "string") {
+          found.push(...parsed.walletAddressRaw.split(","));
+        }
+        if (Array.isArray(parsed.publicKeys)) {
+          found.push(...parsed.publicKeys.filter((k): k is string => typeof k === "string"));
+        }
+        emitWallets(found.filter((w) => /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(w)));
+      } catch {
+        // Not JSON — nothing wallet-shaped to extract.
+      }
+    };
+
+    // Patch fetch: scan request URL + wallet fields of the body.
     const origFetch = window.fetch;
     window.fetch = function (
       input: RequestInfo | URL,
@@ -52,7 +71,7 @@ export default defineContentScript({
         const url = typeof input === "string" ? input : input.toString();
         if (url.includes("portfolio") || url.includes("balance")) {
           scan(url);
-          if (typeof init?.body === "string") scan(init.body);
+          if (typeof init?.body === "string") scanBody(init.body);
         }
       } catch {
         // Never let observation break the page's own fetch.
@@ -75,7 +94,11 @@ export default defineContentScript({
       return new OrigWS(url, protocols);
     } as unknown as typeof WebSocket;
     PatchedWS.prototype = OrigWS.prototype;
-    (PatchedWS as { OPEN: number }).OPEN = OrigWS.OPEN;
+    // Page code reads these off the constructor (WebSocket.OPEN etc.); losing
+    // them would break axiom.trade's own readyState checks.
+    for (const k of ["CONNECTING", "OPEN", "CLOSING", "CLOSED"] as const) {
+      (PatchedWS as unknown as Record<string, number>)[k] = OrigWS[k];
+    }
     window.WebSocket = PatchedWS;
   },
 });

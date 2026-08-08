@@ -10,9 +10,12 @@
   let loading = $state(true);
   let error = $state<string | null>(null);
 
-  // Refetch whenever the SPA navigates to a different token.
+  // Refetch whenever the SPA navigates to a different token. `stale` guards
+  // against a slow response for the previous token landing after the user has
+  // already navigated on.
   $effect(() => {
     const addr = tokenAddress;
+    let stale = false;
     loading = true;
     error = null;
     info = null;
@@ -21,17 +24,25 @@
     (async () => {
       try {
         const raw = await sendMessage({ type: "getTokenInfo", address: addr });
-        info = raw as TokenInfo | null;
+        if (stale) return;
+        info = raw;
         const ticker = info?.tokenTicker;
         if (ticker) {
-          analysis = await sendMessage({ type: "getTokenAnalysis", ticker });
+          const a = await sendMessage({ type: "getTokenAnalysis", ticker });
+          if (stale) return;
+          analysis = a;
         }
       } catch (err) {
+        if (stale) return;
         error = err instanceof Error ? err.message : "Failed to load";
       } finally {
-        loading = false;
+        if (!stale) loading = false;
       }
     })();
+
+    return () => {
+      stale = true;
+    };
   });
 
   const riskClass = $derived(

@@ -7,6 +7,17 @@ itself. Trading and API logic is ported from the Rust SDK
 
 See [`PLAN.md`](PLAN.md) for the full design rationale and roadmap.
 
+## Status
+
+V1 implements PLAN phases 0–5: scaffold, API core with auth refresh, MAIN-world
+interceptor, portfolio overlay (F1), token enrichment (F3), and quick-trade
+buys behind safety rails (F2). All checks pass: 18 unit tests, `svelte-check`
+with zero errors, production build, and the Chromium e2e smoke test.
+
+Deliberately deferred from the plan (post-v1): sell presets (buy-only for now),
+`meme-trending` rank and `price-feed` momentum in the enrichment strip,
+API-reachability health check in the popup, and the live WebSocket feed.
+
 ## Stack
 
 - **[WXT](https://wxt.dev)** — MV3 web-extension framework (Vite, cross-browser).
