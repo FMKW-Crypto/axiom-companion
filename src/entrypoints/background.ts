@@ -3,6 +3,7 @@ import {
   getTokenAnalysis,
   getTokenInfoByAddress,
   getTokenPrice,
+  getEarlyBuyers,
 } from "@/lib/api/market";
 import type { Req, Envelope } from "@/lib/bridge/messages";
 
@@ -35,5 +36,7 @@ async function handle(api: ApiClient, req: Req): Promise<unknown> {
       return getTokenInfoByAddress(api, req.address);
     case "getPrice":
       return getTokenPrice(api, req.mint);
+    case "getEarlyBuyers":
+      return getEarlyBuyers(api, req.pairAddress);
   }
 }

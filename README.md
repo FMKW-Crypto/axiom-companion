@@ -2,7 +2,7 @@
 
 A browser extension that integrates directly into **axiom.trade** — a token-page
 enrichment panel injected into the site itself, showing creator risk, rug count,
-and token metadata next to the chart. API logic is ported from the Rust SDK
+and the token's early buyers (snipers) next to the chart. API logic is ported from the Rust SDK
 [`axiomtrade-rs`](../axiomtrade-rs) into TypeScript. The extension is strictly
 **read-only**: it never places trades.
 
@@ -55,6 +55,10 @@ never handles credentials. Two moving parts:
 | `api/market_data.rs` (`token-analysis`, `clipboard-pair-info`, `price`) | `src/lib/api/market.ts` |
 | `utils/{retry,rate_limiter}.rs` | `src/lib/utils/net.ts` |
 | `models/market.rs` | `src/lib/models/market.ts` (zod) |
+
+One endpoint is **not** from the SDK: `/sniper-transactions-v3` (the early-buyers
+list, `src/lib/models/snipers.ts`) was discovered from the live site — it backs
+axiom's own Snipers modal and returns positional arrays, decoded defensively.
 
 Deliberately **not** ported: the trading and portfolio endpoints, email/OTP/
 password login, Turnkey session creation, user-agent rotation — the extension

@@ -7,6 +7,11 @@ import {
   type TokenInfo,
   type PriceData,
 } from "@/lib/models/market";
+import {
+  SniperTransactionsSchema,
+  aggregateEarlyBuyers,
+  type EarlyBuyer,
+} from "@/lib/models/snipers";
 import { reportDrift } from "@/lib/models/drift";
 
 /**
@@ -45,6 +50,26 @@ export async function getTokenInfoByAddress(
     return null;
   }
   return parsed.data;
+}
+
+/**
+ * GET /sniper-transactions-v3?pairAddress={pair} — the token's earliest
+ * buyers (instant + early snipers), aggregated per wallet. Not from the Rust
+ * SDK; discovered from the live site's own Snipers modal.
+ */
+export async function getEarlyBuyers(
+  api: ApiClient,
+  pairAddress: string,
+): Promise<EarlyBuyer[] | null> {
+  const raw = await api.request({
+    path: `/sniper-transactions-v3?pairAddress=${encodeURIComponent(pairAddress)}`,
+  });
+  const parsed = SniperTransactionsSchema.safeParse(raw);
+  if (!parsed.success) {
+    reportDrift("sniper-transactions-v3", parsed.error, raw);
+    return null;
+  }
+  return aggregateEarlyBuyers(parsed.data);
 }
 
 /** GET /price/{mint} — current price. */

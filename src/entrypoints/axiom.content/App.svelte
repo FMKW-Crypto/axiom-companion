@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import TokenEnrichment from "./TokenEnrichment.svelte";
+  import EarlyBuyers from "./EarlyBuyers.svelte";
   import { currentTokenAddress } from "@/lib/tokenPage";
 
   // `inline` = mounted inside axiom's own sidebar; otherwise floating overlay.
@@ -63,6 +64,7 @@
       {#if open}
         <div class="flex-1 space-y-3 overflow-y-auto p-3">
           <TokenEnrichment {tokenAddress} />
+          <EarlyBuyers {tokenAddress} />
         </div>
       {/if}
     </aside>

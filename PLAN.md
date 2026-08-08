@@ -96,6 +96,9 @@ entrypoints/
 ### F1 — Token page enrichment
 Inject a stats strip on token pages: `token-analysis` (creator/dev info, related tokens), `clipboard-pair-info`, trending rank from `meme-trending`, price momentum from `price-feed`. Detect current token from the URL; the panel only exists on token pages. Placement: inline at the top of the site's own right sidebar (found geometrically — the site has no stable selectors), floating overlay as fallback.
 
+### F2 — Early buyers (added 2026-08-08)
+List the token's earliest buyers from `sniper-transactions-v3` (not in the Rust SDK — discovered from the live site), aggregated per wallet: instant (launch-block) vs early snipers, SOL spent/received, and whether each still holds.
+
 ### Popup
 A short description of what the extension does; extension health (API reachable?) is post-v1.
 

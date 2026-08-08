@@ -1,4 +1,5 @@
 import type { TokenAnalysis, TokenInfo, PriceData } from "@/lib/models/market";
+import type { EarlyBuyer } from "@/lib/models/snipers";
 
 /**
  * Typed request/response contract between the content script and the background
@@ -9,12 +10,14 @@ import type { TokenAnalysis, TokenInfo, PriceData } from "@/lib/models/market";
 export type Req =
   | { type: "getTokenAnalysis"; ticker: string }
   | { type: "getTokenInfo"; address: string }
-  | { type: "getPrice"; mint: string };
+  | { type: "getPrice"; mint: string }
+  | { type: "getEarlyBuyers"; pairAddress: string };
 
 export type Res = {
   getTokenAnalysis: TokenAnalysis | null;
   getTokenInfo: TokenInfo | null;
   getPrice: PriceData | null;
+  getEarlyBuyers: EarlyBuyer[] | null;
 };
 
 export type ResultOf<T extends Req["type"]> = Res[T];
