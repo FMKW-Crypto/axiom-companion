@@ -23,15 +23,21 @@ export function findSidebar(): HTMLElement | null {
   ];
   while (queue.length) {
     const { el, depth } = queue.shift()!;
-    if (depth > 8) continue;
+    if (depth > 12) continue;
     for (const child of el.children) {
       if (!(child instanceof HTMLElement)) continue;
       if (child.tagName === "SCRIPT" || child.tagName === "STYLE") continue;
       const r = child.getBoundingClientRect();
-      // Too narrow to be (or contain) the sidebar.
-      if (r.width < 200) continue;
+      // Too narrow to be (or contain) the sidebar — but only when the element
+      // actually has a box. `display: contents` wrappers (which axiom uses in
+      // the sidebar's ancestor chain) measure 0×0 while their children lay
+      // out normally, so a zero-width element must still be descended into.
+      if (r.width > 0 && r.width < 200) continue;
       const isSidebarShaped =
-        r.width <= 480 && r.height >= vh * 0.5 && r.left >= vw * 0.55;
+        r.width <= 480 &&
+        r.width >= 200 &&
+        r.height >= vh * 0.5 &&
+        r.left >= vw * 0.55;
       if (isSidebarShaped) return child;
       queue.push({ el: child, depth: depth + 1 });
     }

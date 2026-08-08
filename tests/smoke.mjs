@@ -81,7 +81,12 @@ try {
       body:
         "<!doctype html><html><head><title>Axiom</title></head><body>" +
         '<main>token</main>' +
+        // The sidebar hides behind two display:contents wrappers (0×0 rects),
+        // mirroring the real axiom.trade DOM — the walker must descend through
+        // them instead of pruning the subtree as "too narrow".
+        '<div style="display:contents"><div style="display:contents">' +
         '<div id="sidebar" style="position:fixed;right:0;top:0;width:320px;height:100%">sidebar</div>' +
+        "</div></div>" +
         "</body></html>",
     }),
   );
